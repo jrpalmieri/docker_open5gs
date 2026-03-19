@@ -13,11 +13,14 @@ services:
     expose:
       - "27017/udp"
       - "27017/tcp"
+    ports:
+      - "27017:27017/udp"
+      - "27017:27017/tcp"
     networks:
       default:
         ipv4_address: ${MONGO_IP}
   webui:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     container_name: webui
     depends_on:
       - mongo
@@ -37,7 +40,7 @@ services:
       default:
         ipv4_address: ${WEBUI_IP}
   nrf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     container_name: nrf
     env_file:
       - .env
@@ -54,7 +57,7 @@ services:
       default:
         ipv4_address: ${NRF_IP}
   scp:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
     container_name: scp
@@ -73,7 +76,7 @@ services:
       default:
         ipv4_address: ${SCP_IP}
   ausf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -93,7 +96,7 @@ services:
       default:
         ipv4_address: ${AUSF_IP}
   udr:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -114,7 +117,7 @@ services:
       default:
         ipv4_address: ${UDR_IP}
   udm:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -134,7 +137,7 @@ services:
       default:
         ipv4_address: ${UDM_IP}
   smf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -163,7 +166,7 @@ services:
       default:
         ipv4_address: ${SMF_IP}
   upf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -182,8 +185,8 @@ services:
       - "2152/udp"
       - "8805/udp"
       - "9091/tcp"
-    # ports:
-    #   - "2152:2152/udp"
+    #ports:
+    #  - "2152:2152/udp"
     cap_add:
       - NET_ADMIN
     privileged: true
@@ -194,7 +197,7 @@ services:
       default:
         ipv4_address: ${UPF_IP}
   amf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -217,13 +220,13 @@ services:
       - "38412/sctp"
       - "7777/tcp"
       - "9091/tcp"
-    # ports:
-    #   - "38412:38412/sctp"
+    #ports:
+    #  - "38412:38412/sctp"
     networks:
       default:
         ipv4_address: ${AMF_IP}
   pcf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -245,7 +248,7 @@ services:
       default:
         ipv4_address: ${PCF_IP}
   bsf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -266,7 +269,7 @@ services:
       default:
         ipv4_address: ${BSF_IP}
   nssf:
-    image: docker_open5gs
+    image: ghcr.io/herlesupreeth/docker_open5gs:master
     depends_on:
       - nrf
       - scp
@@ -286,48 +289,48 @@ services:
     networks:
       default:
         ipv4_address: ${NSSF_IP}
-  metrics:
-    build: ./metrics
-    image: docker_metrics
-    container_name: metrics
-    env_file:
-      - .env
-    volumes:
-      - ./metrics:/mnt/metrics
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    expose:
-      - "9090/tcp"
-    ports:
-      - "9090:9090/tcp"
-    networks:
-      default:
-        ipv4_address: ${METRICS_IP}
-  grafana:
-    image: grafana/grafana:11.3.0
-    container_name: grafana
-    env_file:
-      - .env
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/:/etc/grafana/provisioning/
-      - ./grafana:/mnt/grafana
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      #- GF_INSTALL_PLUGINS=${GRAFANA_INSTALL_PLUGINS}
-      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-      - GF_PATHS_DATA=/var/lib/grafana
-      - METRICS_IP=${METRICS_IP}
-    expose:
-      - "3000/tcp"
-    ports:
-      - "3000:3000/tcp"
-    networks:
-      default:
-        ipv4_address: ${GRAFANA_IP}
+  # metrics:
+  #   build: ./metrics
+  #   image: docker_metrics
+  #   container_name: metrics
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./metrics:/mnt/metrics
+  #     - /etc/timezone:/etc/timezone:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #   expose:
+  #     - "9090/tcp"
+  #   ports:
+  #     - "9090:9090/tcp"
+  #   networks:
+  #     default:
+  #       ipv4_address: ${METRICS_IP}
+  # grafana:
+  #   image: grafana/grafana:11.3.0
+  #   container_name: grafana
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #     - ./grafana/:/etc/grafana/provisioning/
+  #     - ./grafana:/mnt/grafana
+  #     - /etc/timezone:/etc/timezone:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+  #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+  #     #- GF_INSTALL_PLUGINS=${GRAFANA_INSTALL_PLUGINS}
+  #     - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+  #     - GF_PATHS_DATA=/var/lib/grafana
+  #     - METRICS_IP=${METRICS_IP}
+  #   expose:
+  #     - "3000/tcp"
+  #   ports:
+  #     - "3000:3000/tcp"
+  #   networks:
+  #     default:
+  #       ipv4_address: ${GRAFANA_IP}
 networks:
   default:
     name: docker_open5gs_default
@@ -335,7 +338,7 @@ networks:
       config:
         - subnet: ${TEST_NETWORK}
 volumes:
-  grafana_data:
-    name: grafana_data
+  # grafana_data:
+  #   name: grafana_data
   mongodbdata:
     name: docker_open5gs_mongodbdata
